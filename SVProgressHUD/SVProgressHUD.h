@@ -55,6 +55,7 @@ typedef NSUInteger SVProgressHUDMaskType;
 + (void)showSuccessWithStatus:(NSString*)string;
 + (void)showErrorWithStatus:(NSString *)string;
 + (void)showImage:(UIImage*)image status:(NSString*)status; // use 28x28 white pngs
++ (void)showImage:(UIImage *)image status:(NSString *)string autodismiss:(BOOL)dismiss;
 
 + (void)setOffsetFromCenter:(UIOffset)offset;
 + (void)resetOffsetFromCenter;

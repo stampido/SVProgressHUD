@@ -166,6 +166,13 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
     [[self sharedView] showImage:image status:string duration:displayInterval];
 }
 
++ (void)showImage:(UIImage *)image status:(NSString *)string autodismiss:(BOOL)dismiss {
+    NSTimeInterval displayInterval = [[SVProgressHUD sharedView] displayDurationForString:string];
+    if (dismiss)
+        [[self sharedView] showImage:image status:string duration:displayInterval];
+    else
+        [[self sharedView] showImage:image status:string];
+}
 
 #pragma mark - Dismiss Methods
 
@@ -591,6 +598,34 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
     
     self.fadeOutTimer = [NSTimer timerWithTimeInterval:duration target:self selector:@selector(dismiss) userInfo:nil repeats:NO];
     [[NSRunLoop mainRunLoop] addTimer:self.fadeOutTimer forMode:NSRunLoopCommonModes];
+}
+
+- (void)showImage:(UIImage *)image status:(NSString *)string
+{
+    self.progress = -1;
+    [self cancelRingLayerAnimation];
+    
+    if(![self.class isVisible])
+        [self.class show];
+    
+    self.imageView.tintColor = SVProgressHUDForegroundColor;
+    self.imageView.image = image;
+    self.imageView.hidden = NO;
+    
+    self.stringLabel.text = string;
+    [self updatePosition];
+    [self.indefiniteAnimatedView removeFromSuperview];
+    
+    if(self.maskType != SVProgressHUDMaskTypeNone) {
+        self.accessibilityLabel = string;
+        self.isAccessibilityElement = YES;
+    } else {
+        self.hudView.accessibilityLabel = string;
+        self.hudView.isAccessibilityElement = YES;
+    }
+    
+    UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, string);
 }
 
 - (void)dismiss {
